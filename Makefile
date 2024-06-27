@@ -58,4 +58,4 @@ reset:
         echo "Not allowed in production environment"; \
     fi
 
-.PHONY: startdb
+.PHONY: startdb dropdb migrate-up migrate-down sqlc
