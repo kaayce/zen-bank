@@ -24,27 +24,26 @@ CREATE TABLE "transfers" (
   "updated_at" timestamptz NOT NULL DEFAULT current_timestamp
 );
 
--- CREATE TABLE "users" (
---   "username" varchar PRIMARY KEY,
---   "hashed_password" varchar NOT NULL,
---   "fullname" varchar NOT NULL,
---   "email" varchar UNIQUE NOT NULL,
---   "password_changed_at" timestamptz,
---   "created_at" timestamptz NOT NULL DEFAULT current_timestamp,
---   "updated_at" timestamptz NOT NULL DEFAULT current_timestamp
--- );
+-- Create triggers to automatically update the updated_at column
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
--- CREATE TABLE "sessions" (
---   "id" uuid PRIMARY KEY,
---   "username" varchar NOT NULL,
---   "refresh_token" varchar NOT NULL,
---   "user_agent" varchar NOT NULL,
---   "client_ip" varchar NOT NULL,
---   "is_blocked" boolean NOT NULL,
---   "expires_at" timestamptz NOT NULL DEFAULT current_timestamp,
---   "created_at" timestamptz NOT NULL DEFAULT current_timestamp,
---   "updated_at" timestamptz NOT NULL DEFAULT current_timestamp
--- );
+-- Attach the trigger to each table
+CREATE TRIGGER update_accounts_updated_at BEFORE UPDATE ON accounts
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_entries_updated_at BEFORE UPDATE ON entries
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_transfers_updated_at BEFORE UPDATE ON transfers
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Additional schema definitions
 
 CREATE INDEX ON "accounts" ("owner");
 
@@ -60,12 +59,8 @@ COMMENT ON COLUMN "entries"."amount" IS 'can be negative or positive';
 
 COMMENT ON COLUMN "transfers"."amount" IS 'must be positive';
 
--- ALTER TABLE "accounts" ADD FOREIGN KEY ("owner") REFERENCES "users" ("username");
-
 ALTER TABLE "entries" ADD FOREIGN KEY ("account_id") REFERENCES "accounts" ("id");
 
 ALTER TABLE "transfers" ADD FOREIGN KEY ("from_account_id") REFERENCES "accounts" ("id");
 
 ALTER TABLE "transfers" ADD FOREIGN KEY ("to_account_id") REFERENCES "accounts" ("id");
-
--- ALTER TABLE "sessions" ADD FOREIGN KEY ("username") REFERENCES "users" ("username");
