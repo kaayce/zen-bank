@@ -2,6 +2,8 @@
 include .env
 export $(shell sed 's/=.*//' .env)
 
+# -- DB Targets --
+
 # Start the PostgreSQL container
 postgres:
 	docker run --name $(POSTGRES_CONTAINER_NAME) -p 5434:5432 \
@@ -35,8 +37,25 @@ startdb: postgres createdb
 dropdb:
 	docker exec -it $(POSTGRES_CONTAINER_NAME) dropdb $(POSTGRES_DB)
 
+# sqlc
+sqlc:
+	sqlc generate
+
+# go mod
+mod:
+	go mod tidy && go mod vendor
+
+# run app
+run-app:
+	go build && chmod +x zen-bank && ./zen-bank
+
 # do not run in prod, dev/local only - stops and removes container
 reset:
-	docker stop postgres12_zenbank && docker rm postgres12_zenbank
+	reset:
+    if [ "$(ENV)" = "local" ] || [ "$(ENV)" = "dev" ]; then \
+        docker stop $(POSTGRES_CONTAINER_NAME) && docker rm $(POSTGRES_CONTAINER_NAME); \
+    else \
+        echo "Not allowed in production environment"; \
+    fi
 
 .PHONY: startdb
