@@ -51,11 +51,11 @@ run-app:
 
 # do not run in prod, dev/local only - stops and removes container
 reset:
-	reset:
-    if [ "$(ENV)" = "local" ] || [ "$(ENV)" = "dev" ]; then \
-        docker stop $(POSTGRES_CONTAINER_NAME) && docker rm $(POSTGRES_CONTAINER_NAME); \
-    else \
-        echo "Not allowed in production environment"; \
-    fi
+	@if [ "$(ENV)" = "local" ] || [ "$(ENV)" = "dev" ]; then \
+		echo "Stopping and removing container $(POSTGRES_CONTAINER_NAME)..."; \
+		docker stop $(POSTGRES_CONTAINER_NAME) && docker rm $(POSTGRES_CONTAINER_NAME); \
+	else \
+		echo "Not allowed in production environment"; \
+	fi
 
 .PHONY: startdb dropdb migrate-up migrate-down sqlc
