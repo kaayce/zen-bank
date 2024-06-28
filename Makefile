@@ -41,6 +41,12 @@ dropdb:
 sqlc:
 	sqlc generate
 
+test:
+	go test ./...
+
+test-cov:
+	go test -v -cover ./...
+
 # go mod
 mod:
 	go mod tidy && go mod vendor
@@ -58,4 +64,4 @@ reset:
 		echo "Not allowed in production environment"; \
 	fi
 
-.PHONY: startdb dropdb migrate-up migrate-down sqlc
+.PHONY: startdb dropdb migrate-up migrate-down sqlc test
