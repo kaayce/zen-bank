@@ -10,19 +10,19 @@ import (
 )
 
 const createTransfer = `-- name: CreateTransfer :one
-INSERT INTO transfers (from_account_id, from_account_id, amount)
+INSERT INTO transfers (from_account_id, to_account_id, amount)
 VALUES ($1, $2, $3)
 RETURNING id, from_account_id, to_account_id, amount, created_at, updated_at
 `
 
 type CreateTransferParams struct {
-	FromAccountID   int64 `json:"from_account_id"`
-	FromAccountID_2 int64 `json:"from_account_id_2"`
-	Amount          int64 `json:"amount"`
+	FromAccountID int64 `json:"from_account_id"`
+	ToAccountID   int64 `json:"to_account_id"`
+	Amount        int64 `json:"amount"`
 }
 
 func (q *Queries) CreateTransfer(ctx context.Context, arg CreateTransferParams) (Transfer, error) {
-	row := q.db.QueryRowContext(ctx, createTransfer, arg.FromAccountID, arg.FromAccountID_2, arg.Amount)
+	row := q.db.QueryRowContext(ctx, createTransfer, arg.FromAccountID, arg.ToAccountID, arg.Amount)
 	var i Transfer
 	err := row.Scan(
 		&i.ID,
