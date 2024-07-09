@@ -47,17 +47,21 @@ test:
 test-cov:
 	go test -v -cover ./...
 
-# performance
-test-cov-perf:
+# performance x mem allocation
+test-cov-mem:
 	go test -v -cover ./... -gcflags '-m -l'
+
+# performance
+test-bench:
+	go test -bench=. -benchmem -benchtime=10s
 
 # go mod
 mod:
 	go mod tidy && go mod vendor
 
-# build + perf
-build-perf:
-	go build
+# build x perf
+build-mem:
+	go build -gcflags '-m -l'
 
 # run app
 run-app:
