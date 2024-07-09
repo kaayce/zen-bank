@@ -47,9 +47,17 @@ test:
 test-cov:
 	go test -v -cover ./...
 
+# performance
+test-cov-perf:
+	go test -v -cover ./... -gcflags '-m -l'
+
 # go mod
 mod:
 	go mod tidy && go mod vendor
+
+# build + perf
+build-perf:
+	go build
 
 # run app
 run-app:
