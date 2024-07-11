@@ -42,14 +42,14 @@ sqlc:
 	sqlc generate
 
 test:
-	ENV=test go test ./...
+	go test ./...
 
 test-cov:
-	ENV=test go test -v -cover -short ./...
+	test -v -cover -short ./...
 
 # performance x mem allocation
 test-cov-mem:
-	ENV=test  go test -v -cover ./... -gcflags '-m -l'
+	go test -v -cover ./... -gcflags '-m -l'
 
 # performance
 test-bench:
