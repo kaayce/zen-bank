@@ -18,7 +18,6 @@ var (
 func TestMain(m *testing.M) {
 	var err error
 
-	utils.LoadEnv()
 	err = utils.LoadEnv()
 	if err != nil {
 		log.Fatalf("error loading .env file: %v", err)
