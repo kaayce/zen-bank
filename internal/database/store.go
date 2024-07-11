@@ -91,23 +91,43 @@ func (store *Store) TransferTX(ctx context.Context, arg TransferTxParams) (Trans
 			return err
 		}
 
-		// update account's balance
-		// account 1
-		result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			ID:     arg.FromAccountId,
-			Amount: -arg.Amount,
-		})
-		if err != nil {
-			return err
-		}
+		// Prevent deadlock by ensuring a consistent order of operations based on account IDs
+		if arg.FromAccountId < arg.ToAccountId {
+			// update account's balance
+			// account 1
+			result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+				ID:     arg.FromAccountId,
+				Amount: -arg.Amount,
+			})
+			if err != nil {
+				return err
+			}
 
-		// account 2
-		result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			ID:     arg.ToAccountId,
-			Amount: arg.Amount,
-		})
-		if err != nil {
-			return err
+			// account 2
+			result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+				ID:     arg.ToAccountId,
+				Amount: arg.Amount,
+			})
+			if err != nil {
+				return err
+			}
+		} else {
+			// swap flow
+			result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+				ID:     arg.ToAccountId,
+				Amount: arg.Amount,
+			})
+			if err != nil {
+				return err
+			}
+
+			result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+				ID:     arg.FromAccountId,
+				Amount: -arg.Amount,
+			})
+			if err != nil {
+				return err
+			}
 		}
 
 		return nil
