@@ -29,11 +29,11 @@ func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 	}
 
 	queries := New(tx)
-	error := fn(queries)
-	if error != nil {
+	err = fn(queries)
+	if err != nil {
 		// if err, rollback tx
 		if rbErr := tx.Rollback(); rbErr != nil {
-			return fmt.Errorf("tx error %v, rb error %v", error, rbErr)
+			return fmt.Errorf("tx error %v, rb error %v", err, rbErr)
 		}
 	}
 	// if no errors, commit tx
@@ -94,43 +94,48 @@ func (store *Store) TransferTX(ctx context.Context, arg TransferTxParams) (Trans
 		// Prevent deadlock by ensuring a consistent order of operations based on account IDs
 		if arg.FromAccountId < arg.ToAccountId {
 			// update account's balance
-			// account 1
-			result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-				ID:     arg.FromAccountId,
-				Amount: -arg.Amount,
+			result.FromAccount, result.ToAccount, err = addMoney(ctx, q, addMoneyParams{
+				accountID1: arg.FromAccountId,
+				amount1:    -arg.Amount,
+				accountID2: arg.ToAccountId,
+				amount2:    arg.Amount,
 			})
-			if err != nil {
-				return err
-			}
-
-			// account 2
-			result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-				ID:     arg.ToAccountId,
-				Amount: arg.Amount,
-			})
-			if err != nil {
-				return err
-			}
 		} else {
 			// swap flow
-			result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-				ID:     arg.ToAccountId,
-				Amount: arg.Amount,
+			result.ToAccount, result.FromAccount, err = addMoney(ctx, q, addMoneyParams{
+				accountID1: arg.ToAccountId,
+				amount1:    arg.Amount,
+				accountID2: arg.FromAccountId,
+				amount2:    -arg.Amount,
 			})
-			if err != nil {
-				return err
-			}
-
-			result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-				ID:     arg.FromAccountId,
-				Amount: -arg.Amount,
-			})
-			if err != nil {
-				return err
-			}
 		}
-
-		return nil
+		return err
 	})
 	return result, err
+}
+
+// params for addMoney func
+type addMoneyParams struct {
+	accountID1 int64
+	amount1    int64
+	accountID2 int64
+	amount2    int64
+}
+
+func addMoney(ctx context.Context, q *Queries, params addMoneyParams) (account1 Account, account2 Account, err error) {
+	// account 1
+	account1, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+		ID:     params.accountID1,
+		Amount: params.amount1,
+	})
+	if err != nil {
+		return // named return
+	}
+
+	// account 2
+	account2, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+		ID:     params.accountID2,
+		Amount: params.amount2,
+	})
+	return
 }
