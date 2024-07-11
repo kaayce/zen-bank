@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/joho/godotenv"
+	"github.com/kaayce/zen-bank/utils"
 	_ "github.com/lib/pq"
 )
 
@@ -17,7 +17,9 @@ var (
 
 func TestMain(m *testing.M) {
 	var err error
-	err = godotenv.Load("../../.env")
+
+	utils.LoadEnv()
+	err = utils.LoadEnv()
 	if err != nil {
 		log.Fatalf("error loading .env file: %v", err)
 	}
