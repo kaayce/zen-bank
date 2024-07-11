@@ -17,8 +17,9 @@ func LoadEnv() error {
 	case "public", "test":
 		envPath = "example.env"
 	case "dev", "prod":
-	default:
 		envPath = ".env"
+	default:
+		envPath = "example.env"
 	}
 
 	rootPath, err := GetProjectRoot()
