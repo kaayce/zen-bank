@@ -1,7 +1,13 @@
-# Source Environment variables
-include .env
-export $(shell sed 's/=.*//' .env)
+# Determine which environment file to use
+ifneq ("$(wildcard .env)", "")
+	ENV_FILE=.env
+else
+	ENV_FILE=example.env
+endif
 
+# Source Environment variables
+include $(ENV_FILE)
+export $(shell sed 's/=.*//' $(ENV_FILE))
 # -- DB Targets --
 
 # Start the PostgreSQL container

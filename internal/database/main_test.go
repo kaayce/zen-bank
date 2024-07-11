@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/kaayce/zen-bank/utils"
 	_ "github.com/lib/pq"
 )
 
@@ -17,13 +18,12 @@ var (
 func TestMain(m *testing.M) {
 	var err error
 
-	// err = utils.LoadEnv()
-	// if err != nil {
-	// 	log.Fatalf("error loading .env file: %v", err)
-	// }
+	err = utils.LoadEnv()
+	if err != nil {
+		log.Fatalf("error loading .env file: %v", err)
+	}
 
-	// dbUrl := os.Getenv("DB_URL")
-	dbUrl := "postgres://root:secret@localhost:5434/zen_bank?sslmode=disable"
+	dbUrl := os.Getenv("DB_URL")
 
 	testDB, err = sql.Open("postgres", dbUrl)
 	if err != nil {
