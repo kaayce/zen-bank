@@ -1,7 +1,7 @@
 # ZenBank - Full featured bank application backend [Golang + Postgres + Kubernetes + gRPC]
 
 ## Overview
-Welcome to ZenBank, a sophisticated banking application developed to showcases various technologies and practices in the Go ecosystem. The application includes a robust backend implemented in Go, a Postgres database, and modern deployment techniques using Kubernetes and AWS.
+Welcome to ZenBank, a sophisticated banking application, simulating bank transactions between multiple accounts. Developed to showcases various technologies and practices in the Go ecosystem. The application includes a robust backend implemented in Go, a Postgres database, and modern deployment techniques using Kubernetes and AWS.
 
 ## Technologies Used
 - **Golang**: The primary programming language for the backend.
@@ -94,6 +94,6 @@ make reset
 ```
 
 ## Deployment
-For deployment, ZenBank uses Kubernetes on AWS. Follow the instructions provided in the course to set up AWS EKS and deploy the application.
+TBA
 
 For any questions or issues, please feel free to contact me at [pat.nzediegwu@gmail.com].
