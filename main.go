@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/kaayce/zen-bank/api"
-	db "github.com/kaayce/zen-bank/internal/database"
+	db "github.com/kaayce/zen-bank/db/sqlc"
 	"github.com/kaayce/zen-bank/utils"
 	_ "github.com/lib/pq"
 )

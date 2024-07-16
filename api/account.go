@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	db "github.com/kaayce/zen-bank/internal/database"
+	db "github.com/kaayce/zen-bank/db/sqlc"
 )
 
 type createAccountRequest struct {
