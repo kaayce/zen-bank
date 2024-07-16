@@ -90,4 +90,4 @@ reset:
 		echo "Not allowed in production environment"; \
 	fi
 
-.PHONY: startdb dropdb migrate-up migrate-down sqlc test server reset stop-postgres run-postgres verify
+.PHONY: startdb dropdb migrate-up migrate-down sqlc test server reset stop-postgres run-postgres verify start
