@@ -8,12 +8,13 @@ import (
 
 const alphabets = "abcdefghijklmnopqrstuvwxyz"
 
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
+var (
+	src = rand.NewSource(time.Now().UnixNano())
+	r   = rand.New(src)
+)
 
 func RandomInt(min, max int64) int64 {
-	return min + rand.Int63n(max-min+1)
+	return min + r.Int63n(max-min+1)
 }
 
 func RandomString(n int) string {
@@ -21,7 +22,7 @@ func RandomString(n int) string {
 	k := len(alphabets)
 
 	for i := 0; i < n; i++ {
-		c := alphabets[rand.Intn(k)]
+		c := alphabets[r.Intn(k)]
 		sb.WriteByte(c)
 	}
 	return sb.String()
@@ -37,5 +38,5 @@ func RandomMoney() int64 {
 
 func RandomCurrency() string {
 	currencies := []string{"EUR", "USD", "CAD"}
-	return currencies[rand.Intn(len(currencies))]
+	return currencies[r.Intn(len(currencies))]
 }

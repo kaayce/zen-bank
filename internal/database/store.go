@@ -56,8 +56,6 @@ type TransferTxResult struct {
 	ToEntry     Entry    `json:"to_entry"`
 }
 
-var txKey = struct{}{}
-
 // performs a money transaction from one account to the other
 // creates transfer record, add account entries and update acount balance within a single db tx
 func (store *Store) TransferTX(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {

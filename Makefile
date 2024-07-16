@@ -38,7 +38,7 @@ migrate-up:
 migrate-down:
 	migrate -path $(SCHEMA_DIR) -database $(DB_URL) -verbose down
 
-startdb: postgres createdb
+startdb: postgres createdb migrate-up
 
 dropdb:
 	docker exec -it $(POSTGRES_CONTAINER_NAME) dropdb $(POSTGRES_DB)
@@ -69,6 +69,10 @@ mod:
 build-mem:
 	go build -gcflags '-m -l'
 
+#  run server
+server:
+	go run main.go
+
 # run app
 run-app:
 	go build && chmod +x zen-bank && ./zen-bank
@@ -82,4 +86,4 @@ reset:
 		echo "Not allowed in production environment"; \
 	fi
 
-.PHONY: startdb dropdb migrate-up migrate-down sqlc test
+.PHONY: startdb dropdb migrate-up migrate-down sqlc test server

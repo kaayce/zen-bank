@@ -29,7 +29,7 @@ func LoadEnv() error {
 
 	envPath = filepath.Join(rootPath, envPath)
 
-	fmt.Printf("Loading env file. ENV: %v, EnvPath: %v", env, envPath)
+	fmt.Printf("Loading env file... ENV: %v, EnvPath: %v\n", env, envPath)
 
 	// Load the environment variables from the determined file
 	err = godotenv.Load(envPath)
