@@ -79,7 +79,7 @@ To run this application locally, follow the steps below:
 ### Running the Application
 1. **Build and Run the Application**
    ```sh
-   make run-app
+   make start
    ```
 
 2. **Running Tests**

@@ -65,6 +65,9 @@ test-cov-mem:
 test-bench:
 	go test -bench=. -benchmem -benchtime=10s
 
+mock:
+	mockgen -package mockdb -destination db/mocks/store.go github.com/kaayce/zen-bank/db/sqlc Store
+
 mod:
 	go mod tidy && go mod vendor
 
@@ -90,4 +93,4 @@ reset:
 		echo "Not allowed in production environment"; \
 	fi
 
-.PHONY: startdb dropdb migrate-up migrate-down sqlc test server reset stop-postgres run-postgres verify start
+.PHONY: startdb dropdb migrate-up migrate-down sqlc test server reset stop-postgres run-postgres verify mock start

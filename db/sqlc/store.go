@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	_ "go.uber.org/mock/mockgen/model"
 )
 
 type Store interface {
