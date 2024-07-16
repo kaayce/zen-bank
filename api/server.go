@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 
-	db "github.com/kaayce/zen-bank/internal/database"
+	db "github.com/kaayce/zen-bank/db/sqlc"
 )
 
 // Server serves HTTP requests for our banking service
