@@ -43,6 +43,7 @@ migrate-up:
 migrate-down:
 	migrate -path $(SCHEMA_DIR) -database $(DB_URL) -verbose down
 
+# create new migration file, accepts name var
 migrate-create:
 	@if [ -z "$(name)" ]; then \
 		echo "Error: 'name' variable is required. Usage: make migrate-create name=<filename>"; \
