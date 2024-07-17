@@ -13,7 +13,7 @@ type transferRequest struct {
 	FromAccountID int64  `json:"from_account_id" binding:"required,min=1"`
 	ToAccountID   int64  `json:"To_account_id" binding:"required,min=1"`
 	Amount        int64  `json:"amount" binding:"required,gt=0"`
-	Currency      string `json:"currency" binding:"required,oneof=USD EUR CAD"`
+	Currency      string `json:"currency" binding:"required,currency"`
 }
 
 func (server *Server) createTransfer(ctx *gin.Context) {
@@ -24,11 +24,11 @@ func (server *Server) createTransfer(ctx *gin.Context) {
 		return
 	}
 
-	if server.validAccount(ctx, req.FromAccountID, req.Currency) {
+	if !server.isValidAccount(ctx, req.FromAccountID, req.Currency) {
 		return
 	}
 
-	if server.validAccount(ctx, req.ToAccountID, req.Currency) {
+	if !server.isValidAccount(ctx, req.ToAccountID, req.Currency) {
 		return
 	}
 
@@ -37,16 +37,16 @@ func (server *Server) createTransfer(ctx *gin.Context) {
 		ToAccountId:   req.ToAccountID,
 		Amount:        req.Amount,
 	}
-	account, err := server.store.TransferTX(ctx, arg)
+	result, err := server.store.TransferTX(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, account)
+	ctx.JSON(http.StatusOK, result)
 }
 
-// check if from/to currencies of both accounts match
-func (server *Server) validAccount(ctx *gin.Context, accountID int64, currency string) bool {
+// check if currencies of accounts match
+func (server *Server) isValidAccount(ctx *gin.Context, accountID int64, currency string) bool {
 	account, err := server.store.GetAccount(ctx, accountID)
 	if err != nil {
 		if err == sql.ErrNoRows {
