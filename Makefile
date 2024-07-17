@@ -43,6 +43,14 @@ migrate-up:
 migrate-down:
 	migrate -path $(SCHEMA_DIR) -database $(DB_URL) -verbose down
 
+migrate-create:
+	@if [ -z "$(name)" ]; then \
+		echo "Error: 'name' variable is required. Usage: make migrate-create name=<filename>"; \
+		exit 1; \
+	else \
+		migrate create -ext sql -dir db/migration -seq $(name).sql; \
+	fi
+
 startdb: run-postgres createdb migrate-up
 	@echo "Migrations complete ✅"
 
@@ -93,4 +101,4 @@ reset:
 		echo "Not allowed in production environment"; \
 	fi
 
-.PHONY: startdb dropdb migrate-up migrate-down sqlc test server reset stop-postgres run-postgres verify mock start
+.PHONY: startdb dropdb migrate-up migrate-down migrate-create sqlc test server reset stop-postgres run-postgres verify mock start
