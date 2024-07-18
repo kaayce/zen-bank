@@ -32,6 +32,8 @@ func NewServer(store db.Store) *Server {
 
 	router.POST("/transfers", server.createTransfer)
 
+	// router.POST("/transfers", server.store.CreateUser())
+
 	server.router = router
 	return server
 }
