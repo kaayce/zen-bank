@@ -142,7 +142,3 @@ func (server *Server) updateAccount(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, account)
 }
-
-func errorResponse(err error) gin.H {
-	return gin.H{"error": err.Error()}
-}

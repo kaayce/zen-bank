@@ -33,11 +33,18 @@ func NewServer(config *utils.Config, store db.Store) (*Server, error) {
 		config:     config,
 		tokenMaker: tokenMaker,
 	}
-	router := gin.Default()
 
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("currency", validCurrency)
 	}
+
+	server.setupRouter()
+
+	return server, nil
+}
+
+func (server *Server) setupRouter() {
+	router := gin.Default()
 
 	// routes
 	router.POST("/users/login", server.loginUser)
@@ -52,10 +59,13 @@ func NewServer(config *utils.Config, store db.Store) (*Server, error) {
 	router.POST("/transfers", server.createTransfer)
 
 	server.router = router
-	return server, nil
 }
 
 // run server at specific address
 func (server *Server) Start(address string) error {
 	return server.router.Run(":" + address)
+}
+
+func errorResponse(err error) gin.H {
+	return gin.H{"error": err.Error()}
 }
