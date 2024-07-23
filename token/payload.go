@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 )
+
 var (
 	ErrInvalidToken = errors.New("token is invaid")
 	ErrTokenExpired = errors.New("token is expired")
@@ -32,4 +33,11 @@ func NewPayload(username string, duration time.Duration) (*Payload, error) {
 		ExpiredAt: time.Now().Add(duration),
 	}
 	return payload, nil
+}
+
+func (payload *Payload) Valid() error {
+	if time.Now().After(payload.ExpiredAt) {
+		return ErrTokenExpired
+	}
+	return nil
 }
