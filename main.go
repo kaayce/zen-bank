@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"log"
-	"os"
 
 	"github.com/kaayce/zen-bank/api"
 	db "github.com/kaayce/zen-bank/db/sqlc"
@@ -14,22 +13,23 @@ import (
 func main() {
 	var err error
 
-	err = utils.LoadEnv()
+	// load env
+	config, err := utils.LoadConfig()
 	if err != nil {
 		log.Fatalf("error loading .env file: %v", err)
 	}
 
-	dbUrl := os.Getenv("DB_URL")
-	port := os.Getenv("PORT")
-
-	conn, err := sql.Open("postgres", dbUrl)
+	conn, err := sql.Open("postgres", config.DBUrl)
 	if err != nil {
 		log.Fatalf("cannot connect to the database: %v", err)
 	}
 
 	store := db.NewStore(conn)
-	server := api.NewServer(store)
-	err = server.Start(port)
+	server, err := api.NewServer(config, store)
+	if err != nil {
+		log.Fatalf("cannot create server: %v", err)
+	}
+	err = server.Start(config.ServerPort)
 	if err != nil {
 		log.Fatalf("cannot start server: %v", err)
 	}

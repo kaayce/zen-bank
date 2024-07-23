@@ -18,14 +18,12 @@ var (
 func TestMain(m *testing.M) {
 	var err error
 
-	err = utils.LoadEnv()
+	config, err := utils.LoadConfig()
 	if err != nil {
 		log.Fatalf("error loading .env file: %v", err)
 	}
 
-	dbUrl := os.Getenv("DB_URL")
-
-	testDB, err = sql.Open("postgres", dbUrl)
+	testDB, err = sql.Open("postgres", config.DBUrl)
 	if err != nil {
 		log.Fatalf("Cannot connect to the database: %v", err)
 	}
