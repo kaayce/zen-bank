@@ -9,10 +9,15 @@ import (
 const (
 	ForeignKeyViolation = "23503"
 	UniqueViolation     = "23505"
+	NoDataFound         = "P0002"
 )
 
 var ErrUniqueViolation = &pq.Error{
 	Code: UniqueViolation,
+}
+
+var ErrRecordNotFound = &pq.Error{
+	Code: NoDataFound,
 }
 
 func ErrorCode(err error) string {
