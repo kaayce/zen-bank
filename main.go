@@ -19,7 +19,7 @@ func main() {
 		log.Fatalf("error loading .env file: %v", err)
 	}
 
-	conn, err := sql.Open("postgres", config.DBUrl)
+	conn, err := sql.Open("postgres", config.DBSource)
 	if err != nil {
 		log.Fatalf("cannot connect to the database: %v", err)
 	}

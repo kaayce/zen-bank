@@ -52,7 +52,7 @@ To run this application locally, follow the steps below:
    POSTGRES_DB=zen_bank
    POSTGRES_CONTAINER_NAME=zenbank_postgres
    POSTGRES_IMAGE=postgres:latest
-   DB_URL=postgres://your_postgres_user:your_postgres_password@localhost:5434/zen_bank?sslmode=disable
+   DB_SOURCE=postgres://your_postgres_user:your_postgres_password@localhost:5434/zen_bank?sslmode=disable
    SCHEMA_DIR=path/to/migrations
    ```
 
