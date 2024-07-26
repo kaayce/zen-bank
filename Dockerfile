@@ -18,7 +18,7 @@ COPY --from=builder /app/migrate ./migrate
 COPY db/migration ./db/migration
 
 # Ensure scripts are executable
-RUN chmod +x /app/start.sh /app/wait-for.sh
+RUN chmod +x /app/start.sh
 
 EXPOSE 8080 9090
 CMD [ "/app/main" ]
