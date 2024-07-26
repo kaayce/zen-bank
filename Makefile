@@ -9,13 +9,16 @@ endif
 include $(ENV_FILE)
 export $(shell sed 's/=.*//' $(ENV_FILE))
 
-# -- DB Targets --
+# -- Docker Network --
+network:
+	docker network create $(NETWORK_NAME)
 
+# -- DB Targets --
 stop-postgres:
 	docker stop $(POSTGRES_CONTAINER_NAME)
 
 run-postgres:
-	docker run --name $(POSTGRES_CONTAINER_NAME) -p 5434:5432 \
+	docker run --name $(POSTGRES_CONTAINER_NAME) --network $(NETWORK_NAME) -p 5432:5432 \
 	-e POSTGRES_USER=$(POSTGRES_USER) \
 	-e POSTGRES_PASSWORD=$(POSTGRES_PASSWORD) \
 	-d $(POSTGRES_IMAGE)
@@ -38,10 +41,10 @@ verify:
 	docker exec $(POSTGRES_CONTAINER_NAME) psql -U $(POSTGRES_USER) -c '\l'
 
 migrate-up:
-	migrate -path $(SCHEMA_DIR) -database $(DB_URL) -verbose up
+	migrate -path $(SCHEMA_DIR) -database $(DB_SOURCE) -verbose up
 
 migrate-down:
-	migrate -path $(SCHEMA_DIR) -database $(DB_URL) -verbose down
+	migrate -path $(SCHEMA_DIR) -database $(DB_SOURCE) -verbose down
 
 # create new migration file, accepts name var
 migrate-create:
@@ -52,7 +55,7 @@ migrate-create:
 		migrate create -ext sql -dir db/migration -seq $(name).sql; \
 	fi
 
-startdb: run-postgres createdb migrate-up
+startdb: network run-postgres createdb migrate-up
 	@echo "Migrations complete ✅"
 
 dropdb:
@@ -63,13 +66,13 @@ sqlc:
 	sqlc generate
 
 test:
-	ENV=test go test ./...
+	go test ./...
 
 test-cov:
-	ENV=test go test -v -cover -short ./...
+	go test -v -cover -short ./...
 
 test-cov-mem:
-	ENV=test go test -v -cover ./... -gcflags '-m -l'
+	go test -v -cover ./... -gcflags '-m -l'
 
 test-bench:
 	go test -bench=. -benchmem -benchtime=10s
@@ -93,13 +96,24 @@ run-app:
 	go build && chmod +x zen-bank && ./zen-bank
 
 reset:
-	@if [ "$(ENV)" = "local" ] || [ "$(ENV)" = "dev" ]; then \
+	@if [ "$(GIN_MODE)" = "test" ] || [ "$(GIN_MODE)" = "debug" ]; then \
 		echo "Dropping database $(POSTGRES_DB)..."; \
 		docker exec $(POSTGRES_CONTAINER_NAME) dropdb $(POSTGRES_DB); \
+		echo "Dropping Network $(NETWORK_NAME)..."; \
+		docker rm $(NETWORK_NAME); \
 		echo "Stopping and removing container $(POSTGRES_CONTAINER_NAME)..."; \
 		docker stop $(POSTGRES_CONTAINER_NAME) && docker rm $(POSTGRES_CONTAINER_NAME); \
 	else \
 		echo "Not allowed in production environment"; \
 	fi
 
-.PHONY: startdb dropdb migrate-up migrate-down migrate-create sqlc test server reset stop-postgres run-postgres verify mock start
+# docker
+build-docker-app:
+	docker build -t zenbank:latest .
+
+run-docker-app:
+	docker run --name zenbank --network zenbank-network -p 8080:8080 -e GIN_MODE=release \
+	-e DB_SOURCE="postgresql://pat:secret@postgres12:5432/zen_bank?sslmode=disable" \
+	zenbank:latest
+
+.PHONY: network startdb dropdb migrate-up migrate-down migrate-create sqlc test server reset stop-postgres run-postgres verify mock start

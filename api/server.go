@@ -65,7 +65,7 @@ func (server *Server) setupRouter() {
 
 // run server at specific address
 func (server *Server) Start(address string) error {
-	return server.router.Run(":" + address)
+	return server.router.Run(address)
 }
 
 func errorResponse(err error) gin.H {

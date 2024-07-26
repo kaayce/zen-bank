@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 )
 
+const envFileName = "example.env"
+
 func GetProjectRoot() (string, error) {
 	dir, err := os.Getwd()
 	if err != nil {
@@ -12,7 +14,7 @@ func GetProjectRoot() (string, error) {
 	}
 
 	for {
-		if _, err := os.Stat(filepath.Join(dir, "go.mod")); !os.IsNotExist(err) {
+		if _, err := os.Stat(filepath.Join(dir, envFileName)); !os.IsNotExist(err) {
 			return dir, nil
 		}
 

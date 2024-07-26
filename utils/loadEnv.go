@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -11,12 +11,12 @@ import (
 func LoadEnv() error {
 	var envPath string
 
-	env := os.Getenv("ENV")
+	env := os.Getenv("GIN_MODE")
 
 	switch env {
-	case "public", "test":
+	case "test":
 		envPath = "example.env"
-	case "dev", "prod":
+	case "debug", "release":
 		envPath = ".env"
 	default:
 		envPath = "example.env"
@@ -29,7 +29,7 @@ func LoadEnv() error {
 
 	envPath = filepath.Join(rootPath, envPath)
 
-	fmt.Printf("Loading env file... ENV: %v, EnvPath: %v\n", env, envPath)
+	log.Printf("Loading env file... GIN_MODE: %v, EnvPath: %v\n", env, envPath)
 
 	// Load the environment variables from the determined file
 	err = godotenv.Load(envPath)

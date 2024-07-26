@@ -12,7 +12,7 @@ type Config struct {
 	PostgresDB          string
 	PostgresContainer   string
 	PostgresImage       string
-	DBUrl               string
+	DBSource            string
 	SchemaDir           string
 	TokenSymmetricKey   string
 	AccessTokenDuration time.Duration
@@ -37,11 +37,11 @@ func LoadConfig() (*Config, error) {
 		PostgresDB:          os.Getenv("POSTGRES_DB"),
 		PostgresContainer:   os.Getenv("POSTGRES_CONTAINER_NAME"),
 		PostgresImage:       os.Getenv("POSTGRES_IMAGE"),
-		DBUrl:               os.Getenv("DB_URL"),
+		DBSource:            os.Getenv("DB_SOURCE"),
 		SchemaDir:           os.Getenv("SCHEMA_DIR"),
 		TokenSymmetricKey:   os.Getenv("TOKEN_SYMMETRIC_KEY"),
 		AccessTokenDuration: accessTokenDuration,
-		Environment:         os.Getenv("ENV"),
+		Environment:         os.Getenv("GIN_MODE"),
 		ServerPort:          os.Getenv("PORT"),
 	}
 
