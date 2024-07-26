@@ -10,7 +10,7 @@ RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.1/
 FROM alpine:3.20
 WORKDIR /app
 COPY --from=builder /app/main .
-COPY example.env .
+COPY app.env .
 # Conditionally copy .env file if it exists
 RUN if [ -f ".env" ]; then cp .env .; fi
 COPY start.sh .
