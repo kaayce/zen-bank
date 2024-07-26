@@ -15,11 +15,11 @@ func LoadEnv() error {
 
 	switch env {
 	case "test":
-		envPath = "example.env"
+		envPath = "app.env"
 	case "debug", "release":
 		envPath = ".env"
 	default:
-		envPath = "example.env"
+		envPath = "app.env"
 	}
 
 	rootPath, err := GetProjectRoot()

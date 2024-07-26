@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 )
 
-const envFileName = "example.env"
+const envFileName = "app.env"
 
 func GetProjectRoot() (string, error) {
 	dir, err := os.Getwd()

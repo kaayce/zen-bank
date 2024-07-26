@@ -2,7 +2,7 @@
 ifneq ("$(wildcard .env)", "")
 	ENV_FILE=.env
 else
-	ENV_FILE=example.env
+	ENV_FILE=app.env
 endif
 
 # Source Environment variables
